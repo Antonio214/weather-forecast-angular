@@ -16,21 +16,6 @@ describe('WeatherService', () => {
     expect(service).toBeTruthy();
   });
 
-  // it('should split according to date', () => {
-  //   const rawData = example.list;
-
-  //   const result = service.splitByDay(rawData);
-  //   expect(result).toEqual(exampleSplitted);
-  // });
-
-  // it('should convert from celsiu to kelvin', () => {
-  //   const rawData = 297.19;
-  //   const expected = '24.04';
-
-  //   const result = service.convertFromKelvinToCelsius(rawData);
-  //   expect(result).toBe(expected);
-  // });
-
   it('should return 5days forecast for a city', () => {
     const data = service.getForecastFor('campinas');
 
