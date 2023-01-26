@@ -15,6 +15,9 @@ module.exports = {
     extend: {
       fontFamily: {
         'sora': ['Sora', 'sans-serif']
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       }
     },
   },
