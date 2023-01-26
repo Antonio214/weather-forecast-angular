@@ -1,7 +1,9 @@
-import { getLocaleMonthNames } from '@angular/common';
 import { Injectable } from '@angular/core';
-import { example } from 'src/assets/mocks/exampleForecastCampinas';
 import { ForecastStampData } from './openweather-types';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom, map, Observable, throwError } from 'rxjs';
+import { retry, catchError } from 'rxjs';
+import { apiKey, baseUrl } from './openweather-constants';
 
 type WeatherResumeTypes =
   | 'Thunderstorm'
@@ -32,7 +34,7 @@ type ForecastResponse = {
   providedIn: 'root',
 })
 export class WeatherService {
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   convertFromKelvinToCelsius(kelvin: number): string {
     return (kelvin - 273.15).toFixed(2);
@@ -103,8 +105,6 @@ export class WeatherService {
   }
 
   getDescriptionFromWeather(weather: WeatherResumeTypes): string {
-    console.log(weather);
-
     switch (weather) {
       case 'Thunderstorm':
         return 'Cuidado, hoje vai ter tempestade! Fique atento as previsões meteorológicas e evite sair se não for necessário. Se precisar sair, leve um guarda-chuva e não se exponha à raios.';
@@ -123,55 +123,125 @@ export class WeatherService {
     }
   }
 
-  getForecastFor(brasilianCity: string): ForecastResponse {
+  returnLesserBetween(value1: number, value2: number) {
+    return value1 < value2 ? value1 : value2;
+  }
+
+  returnGreatherBetween(value1: number, value2: number) {
+    return value1 > value2 ? value1 : value2;
+  }
+
+  getWeatherFrom(first: ForecastStampData): WeatherResumeTypes {
+    return first.weather[0].main as WeatherResumeTypes;
+  }
+
+  getDateInfoFrom(firstStamp: ForecastStampData): {
+    formattedDate: string;
+    formattedWeekDay: string;
+  } {
+    const date = new Date(firstStamp.dt * 1000);
+    const formattedDate = this.formatDate(date);
+    const formattedWeekDay = this.formatWeekDay(date);
+
+    return { formattedDate, formattedWeekDay };
+  }
+
+  getMinTempFrom(day: ForecastStampData[], firstStamp: ForecastStampData) {
+    return day.reduce(
+      (min, stamp) => this.returnLesserBetween(min, stamp.main.temp),
+      firstStamp.main.temp
+    );
+  }
+
+  getMaxTempFrom(day: ForecastStampData[], firstStamp: ForecastStampData) {
+    return day.reduce(
+      (max, stamp) => this.returnGreatherBetween(max, stamp.main.temp),
+      firstStamp.main.temp
+    );
+  }
+
+  getAvarageTempFrom(
+    day: ForecastStampData[],
+    firstStamp: ForecastStampData,
+    numOfStamps: number
+  ) {
+    const totalSum = day.reduce(
+      (sum, stamp) => sum + stamp.main.temp,
+      firstStamp.main.temp
+    );
+    const averageTemperature = totalSum / numOfStamps;
+
+    return averageTemperature;
+  }
+
+  getTempInfoFrom(
+    day: ForecastStampData[],
+    firstStamp: ForecastStampData,
+    numOfStamps: number
+  ): { minTemp: any; maxTemp: any; averageTemp: any } {
+    const minTemp = this.getMinTempFrom(day, firstStamp);
+    const maxTemp = this.getMaxTempFrom(day, firstStamp);
+    const averageTemp = this.getAvarageTempFrom(day, firstStamp, numOfStamps);
+
+    return {
+      minTemp,
+      maxTemp,
+      averageTemp,
+    };
+  }
+
+  tranformDayStampsInDayForecast(day: ForecastStampData[]): DayForecast {
+    const numOfStamps = day.length;
+    const firstStamp = day.shift()!;
+
+    const { minTemp, maxTemp, averageTemp } = this.getTempInfoFrom(
+      day,
+      firstStamp,
+      numOfStamps
+    );
+
+    const { formattedDate, formattedWeekDay } =
+      this.getDateInfoFrom(firstStamp);
+    const weather: WeatherResumeTypes = this.getWeatherFrom(firstStamp);
+    const description: string = this.getDescriptionFromWeather(weather);
+
+    return {
+      minTemperature: this.convertFromKelvinToCelsius(minTemp),
+      maxTemperature: this.convertFromKelvinToCelsius(maxTemp),
+      averageTemperature: this.convertFromKelvinToCelsius(averageTemp),
+      resume: weather,
+      description: description,
+      formattedDate,
+      weekDay: formattedWeekDay,
+    };
+  }
+
+  transforResponse(response: any) {
     let forecast: ForecastResponse = {
       success: false,
       days: [],
     };
 
-    const data = example;
-
-    if (data.cod == '200') {
+    if (response.cod == '200') {
       forecast.success = true;
-      const forecastsByDay = this.splitByDay(data.list.slice(0));
-      forecast.days = forecastsByDay.map((day) => {
-        const first = day.shift()!;
 
-        const minTemp = day.reduce(
-          (min, stamp) => (min < stamp.main.temp ? min : stamp.main.temp),
-          first.main.temp
-        );
-        const maxTemp = day.reduce(
-          (max, stamp) => (max > stamp.main.temp ? max : stamp.main.temp),
-          first.main.temp
-        );
-        const totalSum = day.reduce(
-          (sum, stamp) => sum + stamp.main.temp,
-          first.main.temp
-        );
-        const averageTemperature = totalSum / (day.length + 1); //add one because we shifted firts value;
+      const forecastsByDay = this.splitByDay(response.list.slice(0));
 
-        const date = new Date(first.dt * 1000);
-        const formattedDate = this.formatDate(date);
-        const formattedWeekDay = this.formatWeekDay(date);
-
-        const weather: WeatherResumeTypes = first.weather[0]
-          .main as WeatherResumeTypes;
-        const description: string = this.getDescriptionFromWeather(weather);
-
-        return {
-          minTemperature: this.convertFromKelvinToCelsius(minTemp),
-          maxTemperature: this.convertFromKelvinToCelsius(maxTemp),
-          averageTemperature:
-            this.convertFromKelvinToCelsius(averageTemperature),
-          resume: first.weather[0].main,
-          description: description,
-          formattedDate,
-          weekDay: formattedWeekDay,
-        } as DayForecast;
-      });
+      forecast.days = forecastsByDay.map((day) =>
+        this.tranformDayStampsInDayForecast(day)
+      );
     }
 
     return forecast;
+  }
+
+  getForecastFor(brasilianCity: string): Observable<ForecastResponse> {
+    const forecastUrl = `${baseUrl}/data/2.5/forecast?lat=-22.90556&lon=-47.06083&appid=${apiKey}`;
+
+    const observable = this.http
+      .get<any>(forecastUrl)
+      .pipe(map((response) => this.transforResponse(response)));
+
+    return observable;
   }
 }
