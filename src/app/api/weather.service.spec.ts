@@ -16,17 +16,34 @@ describe('WeatherService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should split according to date', () => {
-    const rawData = example.list;
+  // it('should split according to date', () => {
+  //   const rawData = example.list;
 
-    const result = service.splitByDay(rawData);
-    expect(result).toEqual(exampleSplitted);
-  });
+  //   const result = service.splitByDay(rawData);
+  //   expect(result).toEqual(exampleSplitted);
+  // });
+
+  // it('should convert from celsiu to kelvin', () => {
+  //   const rawData = 297.19;
+  //   const expected = '24.04';
+
+  //   const result = service.convertFromKelvinToCelsius(rawData);
+  //   expect(result).toBe(expected);
+  // });
 
   it('should return 5days forecast for a city', () => {
     const data = service.getForecastFor('campinas');
 
     expect(data.success).toBeTrue();
     expect(data.days.length).toBe(6);
+    expect(data.days[0].minTemperature).toBe('24.04');
+    expect(data.days[0].maxTemperature).toBe('29.89');
+    expect(data.days[0].averageTemperature).toBe('27.51');
+    expect(data.days[0].resume).toBe('Clouds');
+    expect(data.days[0].formattedDate).toBe('25 de Janeiro');
+    expect(data.days[0].weekDay).toBe('Quarta-Feira');
+    expect(data.days[0].description).toBe(
+      'Hoje vai estar nublado, mas não deixe isso estragar seu dia! Aproveite para fazer atividades indoor ou pegue um guarda-chuva para se divertir ao ar livre.'
+    );
   });
 });
