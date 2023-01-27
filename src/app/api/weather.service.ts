@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, map, Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs';
 import { apiKey, baseUrl } from './openweather-constants';
+import { WeatherServiceAbstract } from '../weather-service';
 
 type WeatherResumeTypes =
   | 'Thunderstorm'
@@ -33,7 +34,7 @@ export type ForecastResponse = {
 @Injectable({
   providedIn: 'root',
 })
-export class WeatherService {
+export class WeatherService implements WeatherServiceAbstract {
   constructor(private http: HttpClient) {}
 
   convertFromKelvinToCelsius(kelvin: number): string {
@@ -107,19 +108,19 @@ export class WeatherService {
   getDescriptionFromWeather(weather: WeatherResumeTypes): string {
     switch (weather) {
       case 'Thunderstorm':
-        return 'Cuidado, hoje vai ter tempestade! Fique atento as previsões meteorológicas e evite sair se não for necessário. Se precisar sair, leve um guarda-chuva e não se exponha à raios.';
+        return 'Cuidado, hoje vai ter tempestade! Fique atento as previsões meteorológicas e evite sair se não for necessário.';
       case 'Snow':
-        return 'Hoje vai nevar! Se você precisar sair, lembre-se de usar roupas quentes e calçado adequado para neve. Se possível, evite dirigir em condições de neve para garantir sua segurança.';
+        return 'Hoje vai nevar! Se você precisar sair, lembre-se de usar roupas quentes e calçado adequado para neve.';
       case 'Rain':
-        return 'Hoje vai chover, lembre-se de levar um guarda-chuva e se proteja. Se possível evite sair durante a forte chuva, e se precisar sair, evite trafegar em áreas de alagamento.';
+        return 'Hoje vai chover, lembre-se de levar um guarda-chuva e se proteja. Se possível evite sair durante a forte chuva.';
       case 'Drizzle':
-        return '';
+        return 'Hoje vai chover levemente, lembre-se de levar um guarda-chuva, mas não precisa se preocupar muito, as chuvas serão leves.';
       case 'Clouds':
-        return 'Hoje vai estar nublado, mas não deixe isso estragar seu dia! Aproveite para fazer atividades indoor ou pegue um guarda-chuva para se divertir ao ar livre.';
+        return 'Hoje vai estar nublado, mas não deixe isso estragar seu dia! Aproveite para fazer atividades indoor.';
       case 'Clear':
-        return 'Hoje vai ser um dia lindo e ensolarado! Aproveite para sair e aproveitar o sol, seja dando um passeio, praticando esportes ou tendo um piquenique no parque.';
+        return 'Hoje vai ser um dia lindo e ensolarado! Aproveite para sair e aproveitar o sol.';
       default:
-        return 'Hoje o clima será imprevisível, pode haver variações de temperatura e possíveis precipitações. É importante ficar atento as previsões meteorológicas e se preparar para qualquer eventualidade.';
+        return 'Hoje o clima será imprevisível, pode haver variações de temperatura e possíveis precipitações.';
     }
   }
 

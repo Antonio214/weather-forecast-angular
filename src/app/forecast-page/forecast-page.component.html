@@ -6,25 +6,28 @@
     <div class=" flex justify-center">
       <h1 class=" text-white font-sora text-4xl font-bold">{{city}}</h1>
     </div>
-    <div class=" pt-8 flex w-full h-max justify-center items-center flex-col md:flex-row md:flex-wrap md:gap-4 md:pt-0 md:pt-4">
-      <div *ngFor="let day of daysForecast" class=" bg-white w-80 rounded-md shadow mb-4 md:mb-0">
-        <div class=" p-4 flex flex-row justify-between items-center">
-          <div>
-            <p class=" font-sora font-bold text-xl">27 de Janeiro</p>
-            <p class=" font-sora text-sm">Sexta-Feira</p>
+    <div class=" pt-8 flex w-full h-max justify-center items-center flex-col md:flex-row md:flex-wrap md:gap-4 md:pt-4">
+      <div *ngIf=" forecastResponse?.success === true">
+        <div  *ngFor="let day of forecastResponse?.days" class=" bg-white w-80 rounded-md shadow mb-4 md:mb-0">
+          <div class=" p-4 flex flex-row justify-between items-center">
+            <div>
+              <p class=" font-sora font-bold text-xl">{{day.formattedDate}}</p>
+              <p class=" font-sora text-sm">{{day.weekDay}}</p>
+            </div>
+            <div>
+              <p class=" font-sora text-2xl">{{getTemperatureRange(day)}}</p>
+            </div>
           </div>
-          <div>
-            <p class=" font-sora text-2xl">24°/31°</p>
+          <div class=" px-8 flex flex-row  items-center justify-between">
+            <img src="/assets/images/SunWeatherImg.png" alt="image">
+            <p class=" font-sora text-6xl">{{day.averageTemperature}}°</p>
           </div>
-        </div>
-        <div class=" px-8 flex flex-row  items-center justify-between">
-          <img src="/assets/images/SunWeatherImg.png" alt="image">
-          <p class=" font-sora text-6xl">27°</p>
-        </div>
-        <div class=" p-4">
-          <p class=" font-sora text-xs text-center">Hoje vai ser um dia lindo e ensolarado! Aproveite para sair e aproveitar o sol.</p>
+          <div class=" p-4">
+            <p class=" font-sora text-xs text-center">{{day.description}}</p>
+          </div>
         </div>
       </div>
+      
     </div>
   </div>
   
