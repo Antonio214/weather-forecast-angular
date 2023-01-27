@@ -9,7 +9,7 @@ const routes: Routes = [
     component: InitalPageComponent,
   },
   {
-    path: 'forecast',
+    path: 'forecast/:name',
     component: ForecastPageComponent,
   },
 ];

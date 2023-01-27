@@ -24,7 +24,7 @@
     </div>
     <div class=" flex flex-grow justify-center pt-8 items-end pb-8">
       <button [disabled]=" selectedCity === ''" 
-              [routerLink]="'/forecast'" 
+              [routerLink]="['/forecast', selectedCity]" 
               [ngClass]="{'bg-light-gray': selectedCity === '', 'bg-yellow': selectedCity !== '' }" 
               class=" font-sora w-80 h-16 rounded-lg"
       >
