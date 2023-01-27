@@ -1,11 +1,13 @@
-<div class=" bg-dark-gray h-screen flex">
-  <div class="flex-1 flex flex-col ">
-    <div class=" flex justify-center pt-20 pb-10">
-      <img src="/assets/images/SunLogo.png" alt="image">
-    </div>
-    <div class=" flex flex-col items-center">
-      <h1 class=" text-white font-sora text-4xl font-bold">Bem vinde :)</h1>
-      <h2 class=" text-white font-sora text-2xl">Qual a previsão da semana?</h2>
+<div class=" bg-dark-gray min-h-screen flex">
+  <div class="flex-grow flex flex-col items-center justify-center">
+    <div class="flex flex-col md:flex-row md:gap-4 md:items-center">
+      <div class=" flex justify-center pb-10 md:pb-0">
+        <img src="/assets/images/SunLogo.png" alt="image">
+      </div>
+      <div class=" flex flex-col items-center">
+        <h1 class=" text-white font-sora text-4xl font-bold">Bem vinde :)</h1>
+        <h2 class=" text-white font-sora text-2xl">Qual a previsão da semana?</h2>
+      </div>  
     </div>
     <div class=" flex items-center justify-center pt-10 flex-col ">
       <input [ngClass]="{'gradient-background': !hasSelectedCity, 'gradient-background-opacity': hasSelectedCity}" 
@@ -22,7 +24,7 @@
               value=" {{cityOption}} ">
       
     </div>
-    <div class=" flex flex-grow justify-center pt-8 items-end pb-8">
+    <div class=" flex justify-center pt-8 items-end">
       <button [disabled]=" selectedCity === ''" 
               [routerLink]="['/forecast', selectedCity]" 
               [ngClass]="{'bg-light-gray': selectedCity === '', 'bg-yellow': selectedCity !== '' }" 

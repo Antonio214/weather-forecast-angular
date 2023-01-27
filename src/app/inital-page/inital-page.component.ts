@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./inital-page.component.scss'],
 })
 export class InitalPageComponent {
-  cityOptions = ['Campinas, SP', 'São Paulo, SP'];
+  cityOptions = ['Campinas, SP', 'São Paulo, SP', 'Varginha, MG'];
   selectedCity = '';
 
   changeSelectedCity(value: string) {

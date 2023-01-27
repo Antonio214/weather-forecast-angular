@@ -14,7 +14,7 @@ type WeatherResumeTypes =
   | 'Clear'
   | 'Clouds';
 
-type DayForecast = {
+export type DayForecast = {
   minTemperature: string;
   maxTemperature: string;
   averageTemperature: string;
@@ -24,7 +24,7 @@ type DayForecast = {
   weekDay: string;
 };
 
-type ForecastResponse = {
+export type ForecastResponse = {
   success: boolean;
   message?: string;
   days: DayForecast[];
