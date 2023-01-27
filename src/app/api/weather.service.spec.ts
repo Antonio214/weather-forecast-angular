@@ -42,7 +42,7 @@ describe('WeatherService', () => {
       expect(data.days[0].formattedDate).toBe('25 de Janeiro');
       expect(data.days[0].weekDay).toBe('Quarta-Feira');
       expect(data.days[0].description).toBe(
-        'Hoje vai estar nublado, mas não deixe isso estragar seu dia! Aproveite para fazer atividades indoor ou pegue um guarda-chuva para se divertir ao ar livre.'
+        'Hoje vai estar nublado, mas não deixe isso estragar seu dia! Aproveite para fazer atividades indoor.'
       );
     });
 
@@ -50,5 +50,18 @@ describe('WeatherService', () => {
       `${baseUrl}/data/2.5/forecast?lat=-22.90556&lon=-47.06083&appid=${apiKey}`
     );
     req.flush(example);
+  });
+
+  it('should return false forecast on error', () => {
+    const observable = service.getForecastFor('campinas');
+    observable.subscribe((data) => {
+      expect(data.success).toBeFalse();
+      expect(data.message).toBeDefined();
+    });
+
+    const req = httpTestingController.expectOne(
+      `${baseUrl}/data/2.5/forecast?lat=-22.90556&lon=-47.06083&appid=${apiKey}`
+    );
+    req.flush({ cod: '400' });
   });
 });

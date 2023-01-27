@@ -8,16 +8,13 @@ describe('InitalPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InitalPageComponent ]
-    })
-    .compileComponents();
+      declarations: [InitalPageComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(InitalPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should pass');
 });

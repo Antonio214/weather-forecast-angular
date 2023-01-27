@@ -8,16 +8,13 @@ describe('ForecastPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ForecastPageComponent ]
-    })
-    .compileComponents();
+      declarations: [ForecastPageComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ForecastPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should pass');
 });

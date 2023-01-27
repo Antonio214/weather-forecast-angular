@@ -71,12 +71,20 @@ export class WeatherMockService implements WeatherServiceAbstract {
           averageTemperature: '26',
           resume: 'Clear',
           description:
-            'Hoje vai ser um dia lindo e ensolarado! Aproveite para sair e aproveitar o sol.',
+            'Hoje vai ser um dia lindo e ensolarado! Aproveite para sair e aproveitar o sol, lembre-se do protetor solar.',
         },
       ],
     };
 
+    const dataError: ForecastResponse = {
+      success: false,
+      message:
+        'Infelizmente algo deu errado com sua requisição. Mas não se preocupe, já estamos trabalhando para corrigir.',
+      days: [],
+    };
+
     observer.next(data);
+    // observer.next(dataError);
     observer.complete();
 
     return {

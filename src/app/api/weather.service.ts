@@ -38,7 +38,7 @@ export class WeatherService implements WeatherServiceAbstract {
   constructor(private http: HttpClient) {}
 
   convertFromKelvinToCelsius(kelvin: number): string {
-    return (kelvin - 273.15).toFixed(2);
+    return (kelvin - 273.15).toFixed(0);
   }
 
   splitByDay(rawData: ForecastStampData[]): ForecastStampData[][] {
@@ -118,7 +118,7 @@ export class WeatherService implements WeatherServiceAbstract {
       case 'Clouds':
         return 'Hoje vai estar nublado, mas não deixe isso estragar seu dia! Aproveite para fazer atividades indoor.';
       case 'Clear':
-        return 'Hoje vai ser um dia lindo e ensolarado! Aproveite para sair e aproveitar o sol.';
+        return 'Hoje vai ser um dia lindo e ensolarado! Aproveite para sair e aproveitar o sol, lembre-se do protetor solar.';
       default:
         return 'Hoje o clima será imprevisível, pode haver variações de temperatura e possíveis precipitações.';
     }
@@ -231,6 +231,10 @@ export class WeatherService implements WeatherServiceAbstract {
       forecast.days = forecastsByDay.map((day) =>
         this.tranformDayStampsInDayForecast(day)
       );
+    } else {
+      forecast.success = false;
+      forecast.message =
+        'Infelizmente algo deu errado com sua requisição. Mas não se preocupe, já estamos trabalhando para corrigir.';
     }
 
     return forecast;
@@ -242,7 +246,6 @@ export class WeatherService implements WeatherServiceAbstract {
     const observable = this.http
       .get<any>(forecastUrl)
       .pipe(map((response) => this.transforResponse(response)));
-
     return observable;
   }
 }

@@ -6,8 +6,7 @@
     <div class=" flex justify-center">
       <h1 class=" text-white font-sora text-4xl font-bold">{{city}}</h1>
     </div>
-    <div class=" pt-8 flex w-full h-max justify-center items-center flex-col md:flex-row md:flex-wrap md:gap-4 md:pt-4">
-      <div *ngIf=" forecastResponse?.success === true">
+    <div *ngIf=" forecastResponse?.success === true" class=" pt-8 flex w-full h-max justify-center items-center flex-col md:flex-row md:flex-wrap md:gap-4 md:pt-4">
         <div  *ngFor="let day of forecastResponse?.days" class=" bg-white w-80 rounded-md shadow mb-4 md:mb-0">
           <div class=" p-4 flex flex-row justify-between items-center">
             <div>
@@ -26,8 +25,10 @@
             <p class=" font-sora text-xs text-center">{{day.description}}</p>
           </div>
         </div>
-      </div>
       
+    </div>
+    <div *ngIf=" forecastResponse?.success === false" class=" flex justify-center items-center pt-8">
+      <h2 class=" text-white font-sora text-3xl text-center ">{{forecastResponse?.message}}</h2>
     </div>
   </div>
   
