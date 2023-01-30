@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ForecastStampData } from './openweather-types';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom, map, Observable, throwError } from 'rxjs';
+import { firstValueFrom, map, Observable, Observer, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs';
 import { apiKey, baseUrl } from './openweather-constants';
 import { WeatherServiceAbstract } from '../weather-service';
 
-type WeatherResumeTypes =
+export type WeatherResumeTypes =
   | 'Thunderstorm'
   | 'Clouds'
   | 'Drizzle'
   | 'Rain'
   | 'Snow'
-  | 'Clear'
-  | 'Clouds';
+  | 'Clear';
 
 export type DayForecast = {
   minTemperature: string;
@@ -240,8 +239,46 @@ export class WeatherService implements WeatherServiceAbstract {
     return forecast;
   }
 
+  getLatLonFromCity(brasilianCity: string) {
+    switch (brasilianCity) {
+      case 'campinas':
+        return { success: true, lat: -22.90556, lon: -47.06083 };
+
+      case 'são paulo':
+        return { success: true, lat: -23.5506507, lon: -46.6333824 };
+
+      case 'varginha':
+        return { success: true, lat: -21.5565914, lon: -45.4340674 };
+
+      default:
+        return { success: false, lat: 0, lon: 0 };
+    }
+  }
+
+  returnInvalidCity(observer: Observer<ForecastResponse>) {
+    const invalidCityMessage =
+      'Infelizmente, não conseguimos localizar a cidade que está procurando, tente repetir a pesquisa.';
+
+    const data: ForecastResponse = {
+      success: false,
+      message: invalidCityMessage,
+      days: [],
+    };
+
+    observer.next(data);
+    observer.complete();
+
+    return {
+      unsubscribe() {},
+    };
+  }
+
   getForecastFor(brasilianCity: string): Observable<ForecastResponse> {
-    const forecastUrl = `${baseUrl}/data/2.5/forecast?lat=-22.90556&lon=-47.06083&appid=${apiKey}`;
+    const { lat, lon, success } = this.getLatLonFromCity(brasilianCity);
+
+    if (!success) return new Observable(this.returnInvalidCity);
+
+    const forecastUrl = `${baseUrl}/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
 
     const observable = this.http
       .get<any>(forecastUrl)

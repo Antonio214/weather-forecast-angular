@@ -24,7 +24,7 @@ const development = [
 @NgModule({
   declarations: [AppComponent, InitalPageComponent, ForecastPageComponent],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
-  providers: [...development],
+  providers: [...production],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

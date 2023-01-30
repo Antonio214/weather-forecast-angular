@@ -8,12 +8,29 @@ import { Component } from '@angular/core';
 export class InitalPageComponent {
   cityOptions = ['Campinas, SP', 'São Paulo, SP', 'Varginha, MG'];
   selectedCity = '';
+  cityValues = {
+    '': '',
+    'Campinas, SP': 'campinas',
+    'São Paulo, SP': 'são paulo',
+    'Varginha, MG': 'varginha',
+  };
 
   changeSelectedCity(value: string) {
-    this.selectedCity = value;
+    const nonNullOption = Object.keys(this.cityValues).includes(value)
+      ? (value as keyof typeof this.cityValues)
+      : '';
+
+    this.selectedCity = this.cityValues[nonNullOption];
   }
 
   get hasSelectedCity() {
     return this.selectedCity !== '';
+  }
+
+  hasSelectedThisCity(option: string) {
+    return (
+      this.cityValues[option as keyof typeof this.cityValues] ==
+      this.selectedCity
+    );
   }
 }

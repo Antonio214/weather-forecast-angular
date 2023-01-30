@@ -18,7 +18,7 @@
             </div>
           </div>
           <div class=" px-8 flex flex-row  items-center justify-between">
-            <img src="/assets/images/SunWeatherImg.png" alt="image">
+            <img [src]="getWeatherImage(day.resume)" alt="image">
             <p class=" font-sora text-6xl">{{day.averageTemperature}}°</p>
           </div>
           <div class=" p-4">

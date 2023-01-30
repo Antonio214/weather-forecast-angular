@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Type } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DayForecast, ForecastResponse } from '../api/weather.service';
+import {
+  DayForecast,
+  ForecastResponse,
+  WeatherResumeTypes,
+} from '../api/weather.service';
 import { WeatherServiceAbstract } from '../weather-service';
 
 @Component({
@@ -9,7 +13,7 @@ import { WeatherServiceAbstract } from '../weather-service';
   styleUrls: ['./forecast-page.component.scss'],
 })
 export class ForecastPageComponent {
-  city: string = '';
+  cityValue: string = '';
   private routeSub: any;
   private forecastSub: any;
   forecastResponse?: ForecastResponse;
@@ -19,15 +23,42 @@ export class ForecastPageComponent {
     private weatherService: WeatherServiceAbstract
   ) {}
 
+  get city() {
+    const cityNames = {
+      '': '',
+      campinas: 'Campinas, SP',
+      'são paulo': 'São Paulo, SP',
+      varginha: 'Varginha, MG',
+    };
+
+    return Object.keys(cityNames).includes(this.cityValue)
+      ? cityNames[this.cityValue as keyof typeof cityNames]
+      : this.cityValue;
+  }
+
   getTemperatureRange(day: DayForecast) {
     return `${day.minTemperature}°/${day.maxTemperature}°`;
   }
 
+  getWeatherImage(weather: WeatherResumeTypes) {
+    const weatherToImage = {
+      Thunderstorm: 'StormWeatherImg.png',
+      Clouds: 'CloudsWeatherImg.png',
+      Drizzle: 'DrizzleWeatherImg.png',
+      Rain: 'RainWeatherImg.png',
+      Snow: 'SnowWeatherImg.png',
+      Clear: 'SunWeatherImg.png',
+    };
+
+    const url = `/assets/images/${weatherToImage[weather]}`;
+    return url;
+  }
+
   ngOnInit() {
     this.routeSub = this.route.params.subscribe((params) => {
-      this.city = params['name'];
+      this.cityValue = params['name'];
       this.forecastSub = this.weatherService
-        .getForecastFor(this.city)
+        .getForecastFor(this.cityValue)
         .subscribe((data) => {
           console.log(data);
           this.forecastResponse = data;
